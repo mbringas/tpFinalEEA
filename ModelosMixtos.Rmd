@@ -15,7 +15,6 @@ library(dplyr)
 # Chapter 4 Descriptive Syntax in R.
 
 class <- read.csv("classroom.csv", h = T)
-class <- class %>% select(-c(schoolid,childid,classid))
 ```
 
 Estadistica descriptiva sobre todos los datos
@@ -62,6 +61,7 @@ summary(mlm_todo)
 
 level1 <- data.frame(sex,minority,mathkind,mathgain,ses)
 summary(level1)
+
 
 ```
 
@@ -120,8 +120,7 @@ dim(level3.agg)
 
 class.first8 <- class[class$schoolid <= 8,]
 par(mfrow=c(4,2))
-for (i in 1:8) 
-{boxplot(class.first8$mathgain[class.first8$schoolid==i] ~ class.first8$classid[class.first8$schoolid==i])}
+for (i in 1:8) {boxplot(class.first8$mathgain[class.first8$schoolid==i] ~ class.first8$classid[class.first8$schoolid==i])}
 
 ```
 
@@ -199,6 +198,8 @@ summary(model4.4.fit)
 ```
 
 ```{r}
+install.packages("Matrix")
+install.packages("lme4")
 library(lme4)
 
 # Fit Model 4.1 (see chapter4_R_final.R for code to load the data).
@@ -213,6 +214,7 @@ confint(model4.1.fit.lmer)
 ranef(model4.1.fit.lmer)
 
 # Plot the predicted random effects along with measures of uncertainty.
+install.packages("merTools")
 library(merTools)
 REsim(model4.1.fit.lmer)
 plotREsim(REsim(model4.1.fit.lmer))
@@ -266,11 +268,11 @@ trellis.device(color=F)
 
 # Generate Figure 4.5
 
-qqnorm(model4.2.fit, ~ranef(.,level=2))
+qqnorm(ranef(model4.2.fit, level = 2)$`(Intercept)`)
 
 # Generate Figure 4.6
 
-qqnorm(model4.2.fit, ~ranef(.,level=1))
+qqnorm(ranef(model4.2.fit,level=1)$`(Intercept)`)
 
 # Generate Figure 4.7 
  
