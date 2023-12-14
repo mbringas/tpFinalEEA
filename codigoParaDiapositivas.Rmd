@@ -1,0 +1,128 @@
+---
+title: "Figuras para las diapositivas de MLM"
+output: html_notebook
+author: Mauro Bringas
+---
+
+Ejemplo 1: Tiempo de viaje de onda sonora en rieles.
+
+```{r}
+library(nlme)
+
+rails_data <- nlme::Rail
+zeros <- rep(0,18)
+par(bty = 'n',bg=NA) 
+m1<-mean(rails_data$travel)
+s1<-sd(rails_data$travel)
+xgauss <- c(0:140)
+ygauss <- 100*dnorm(xgauss,m1,s1)
+
+plot(rails_data$travel,zeros,pch=16,cex=0.9,xlim=c(0,140),ylim=c(-.1,2), yaxt='n',ylab="",xlab="tiempo (ms)")
+lines(xgauss,ygauss)
+
+dev.copy(png,'rails.png')
+dev.off()
+```
+
+Distinguiendo los rieles podemos notar la variabilidad dentro de un mismo riel y entre distintos rieles
+```{r}
+par(bty = 'n',bg=NA)
+colores=c("red","blue","green","purple","orange","magenta")
+plot(rails_data$travel,zeros,col=colores[rails_data$Rail],pch=16,cex=0.9,xlim=c(0,140),ylim=c(-0.1,2), yaxt='n',ylab="",xlab="tiempo (ms)")
+lines(xgauss,ygauss)
+
+colores=c("green","red","orange","magenta","blue","purple")
+
+for (i in 1:6){
+  m <- mean(rails_data[rails_data$Rail == i, "travel"])
+  sd <- sd(rails_data[rails_data$Rail == i, "travel"])
+  min <- min(rails_data[rails_data$Rail == i, "travel"])-30
+  max <- max(rails_data[rails_data$Rail == i, "travel"])+30
+  xgaus <- min:max
+  ygaus <- dnorm(xgaus,m,sd)/max(dnorm(xgaus,m,sd))
+  lines(xgaus,ygaus,col=colores[i])
+}
+dev.copy(png,'railsPorRiel.png')
+dev.off()
+```
+Ejemplo 2: Variación de peso en ratas
+Se estudia el cambio de peso de distintas ratas que son sometidas a una determinada dieta controlada. Podemos observar un scatterplot de los pesos de todas las ratas en función del tiempo de dieta.
+```{r}
+dataset_pesos <- nlme::BodyWeight
+dataset_pesos <- dataset_pesos[dataset_pesos$Diet==1,c("Time","weight","Rat")]
+
+par(bty = 'n',bg=NA)
+
+plot(dataset_pesos$Time,dataset_pesos$weight,pch=16,cex=0.9,ylab="peso (g)",xlab="tiempo (dias)")
+lm <- line(dataset_pesos$Time,dataset_pesos$weight)
+lines(dataset_pesos$Time,lm$fitted.values)
+dev.copy(png,'dieta.png')
+dev.off()
+```
+Si distinguimos por cada rata con un color distinto
+```{r}
+
+par(bty = 'n',bg=NA)
+colores=c("red","blue","green","purple","orange","magenta","darkgreen","lightblue")
+
+plot(dataset_pesos$Time,dataset_pesos$weight,col=colores[dataset_pesos$Rat],pch=16,cex=0.9,ylab="peso (g)",xlab="tiempo (dias)")
+lm <- line(dataset_pesos$Time,dataset_pesos$weight)
+lines(dataset_pesos$Time,lm$fitted.values)
+
+colores=c("purple","red","blue","green","magenta","darkgreen","lightblue","orange")
+
+for (i in 1:8){
+  subset <- dataset_pesos[dataset_pesos$Rat == i, c("Time","weight")]
+  #lines(subset$Time,rep(mean(subset$weight),length(subset$Time)),lty = "dashed",col=colores[i])
+  modelo <- line(subset$Time,subset$weight)
+  lines(subset$Time,modelo$fitted.values,col=colores[i])
+}
+
+dev.copy(png,'dieta_por_sujetos.png')
+dev.off()
+
+```
+y podemos mirar la varianza entre las medias de los distintos individuos
+```{r}
+par(bty = 'n',bg=NA)
+colores=c("red","blue","green","purple","orange","magenta","darkgreen","lightblue")
+
+plot(dataset_pesos$Time,dataset_pesos$weight,col=colores[dataset_pesos$Rat],pch=16,cex=0.9,xaxt='n',ylab="peso (g)",xlab="",xlim=c(52.8,60),ylim=c(220,300))
+
+colores=c("purple","red","blue","green","magenta","darkgreen","lightblue","orange")
+
+for (i in 1:8){
+  subset <- dataset_pesos[dataset_pesos$Rat == i, c("Time","weight")]
+  lines(subset$Time,rep(mean(subset$weight),length(subset$Time)),lty = "dashed",col=colores[i])
+}
+
+m <- mean(dataset_pesos$weight)
+sd <- sd(dataset_pesos$weight)
+min <- min(dataset_pesos$weight)-30
+max <- max(dataset_pesos$weight)+30
+ygaus <- min:max
+xgaus <- dnorm(ygaus,m,sd)/max(dnorm(ygaus,m,sd))*2+53
+lines(xgaus,ygaus)
+
+dev.copy(png,'dieta_medias_variabilidad individuos.png')
+dev.off()
+
+```
+
+Ejemplo 3: Máquinas
+Se testea la productividad de varios trabajadores en tres maquinas, donde cada medicion es tomada por triplicado.
+
+```{r}
+maquinas <- nlme::Machines
+maquinas$machnum <- as.numeric(factor(maquinas$Machine))
+par(bty = 'n',bg=NA)
+colores=c("red","blue","green","purple","orange","magenta","darkgreen","lightblue")
+plot(x=maquinas$machnum,y=maquinas$score,col=colores[maquinas$Worker],xaxt='n',ylab="productividad ",xlab="máquina",xlim=c(0.9,3.1))
+ticks = c(1,2,3)
+labels = c("A","B","C")
+axis(side = 1, at = ticks,labels=labels)
+
+
+dev.copy(png,'maquinas.png')
+dev.off()
+```
