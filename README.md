@@ -2,7 +2,7 @@
 ## 📈 Modelos lineales mixtos 📉
 
 Se encuentran en este repositorio dos archivos Rmd. En [codigoParaDiapositivas.Rmd](codigoParaDiapositivas.Rmd) pueden encontrar el código utilizado para generar las figuras usadas en las diapositivas [MLM diapositivas.pptx](MLM_diapositivas.pptx). 
-En el segundo se encuentra desarrollado el ejemplo práctico, que contiene código basado en material del libro Linear Mixed Models de West, Welch y Galecki.
+En el archivo [ModelosMixtos.RMD](ModelosMixtos.Rmd) se encuentra desarrollado el ejemplo práctico, que contiene código basado en material del libro Linear Mixed Models de West, Welch y Galecki.
 
 ## Bibliografia consultada 📚
 - West, Ph.D. Kathleen B. Welch, MS, MPH · Andrzej T. Galecki, M.D., Ph.D. Linear Mixed Models: A Practical Guide using Statistical Software
